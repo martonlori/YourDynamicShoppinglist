@@ -5,7 +5,6 @@ import os
 app = Flask(__name__)
 
 
-
 def get_shoppinglist_db_connection():
     conn = sqlite3.connect("shoppinglist.db")
     conn.row_factory = sqlite3.Row
@@ -26,3 +25,12 @@ def shoppinglist():
 @app.route("/shoppingmate", methods=["GET"])
 def shoppingmate():
     return render_template("shoppingmate.html")
+
+@app.route("/signup",methods=["GET"])
+def signup():
+    return render_template("signup.html")
+
+@app.route("/login", methods=["GET"])
+def login():
+    return render_template("login.html")
+
