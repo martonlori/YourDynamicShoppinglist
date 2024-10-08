@@ -1,14 +1,28 @@
 import sqlite3
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
 import os
+import bcrypt
 
 app = Flask(__name__)
 
 
-def get_shoppinglist_db_connection():
-    conn = sqlite3.connect("shoppinglist.db")
-    conn.row_factory = sqlite3.Row
-    return conn
+#Opening database connection
+
+def get_db_connection():
+    connection = sqlite3.connect("shoppinglist.db")
+    db = connection.cursor()
+    return db, connection
+
+
+#Password hashing
+
+def hash_password():
+    user_password = request.form.get("password")
+    salt = bcrypt.gensalt(rounds=12)
+    hashed_password = bcrypt.hashpw(user_password.encode('utf-8'), salt) 
+    return hashed_password   
+
+
 
 @app.route("/", methods=["GET"])
 def index():
@@ -34,3 +48,5 @@ def signup():
 def login():
     return render_template("login.html")
 
+@app.route("/register", methods=["POST"])
+def register():
