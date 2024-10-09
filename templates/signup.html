@@ -5,7 +5,7 @@
 {% block main %}
 
 <main class="d-flex justify-content-center align-items-start" style="height: 100vh; padding-bottom: 300px;">
-    <form class="m-auto" style="width: fit-content;">
+    <form  action="/register" method="POST" class="m-auto" style="width: fit-content;">
         <div class="mb-3">
             <label for="username_input" class="form-label"> Username</label>
             <input type="text" name="username" id="username_input" class="form-control"  autofocus="off" autocomplete>
@@ -19,7 +19,7 @@
             <input type="password" autocomplete="off" autofocus="off" name="passwordcheck_input" class="form-control">
         </div>
         <div>
-            <button action="/register" method="POST" type="submit" class="btn btn-primary"> Register </button>
+            <button type="submit" class="btn btn-primary"> Register </button>
         </div>
     </form>
 </main>
