@@ -55,15 +55,25 @@ def login():
 
 @app.route("/register", methods=["POST"])
 def register():
-    db, connection = get_users_db_connection()
-    #commit on connection
-    #close on connection
-    hashed_password_bytestring = hash_password() #Get user password, hash it with adding salt, return it as hashed_password
-    hashed_password = hashed_password_bytestring.decode('utf-8')
     username = request.form.get("username") #Get username from form
-    print(username, hashed_password)
-    db.execute("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashed_password])
-    connection.commit()
-    connection.close()
-    return render_template ("index.html")
+    password = request.form.get("password") #Get password from form
+    password_confirmation = request.form.get("passwordcheck") #Get the password confirmation
+    db, connection = get_users_db_connection()
+
+    if db.execute("SELECT * FROM users WHERE username = ?", [username]).fetchone() is None and password == password_confirmation:
+        hashed_password_bytestring = hash_password() #Get user password, hash it with adding salt, return it as hashed_password
+        hashed_password = hashed_password_bytestring.decode('utf-8')
+        db.execute("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashed_password])
+        connection.commit()
+        connection.close()
+        return render_template ("index.html")
+        #Add success message
+    
+    elif db.execute("SELECT * FROM users WHERE username = ?", [username]).fetchone() is not None:
+        return render_template("signup.html")
+        #Add error message
+
+    elif password != password_confirmation:
+        return render_template("signup.html")
+        #Add error message
 
