@@ -8,8 +8,13 @@ app = Flask(__name__)
 
 #Opening database connection
 
-def get_db_connection():
+def get_shoppinglist_db_connection():
     connection = sqlite3.connect("shoppinglist.db")
+    db = connection.cursor()
+    return db, connection
+
+def get_users_db_connection():
+    connection = sqlite3.connect("users.db")
     db = connection.cursor()
     return db, connection
 
@@ -50,15 +55,15 @@ def login():
 
 @app.route("/register", methods=["POST"])
 def register():
-    db, connection = get_db_connection()
+    db, connection = get_users_db_connection()
     #commit on connection
     #close on connection
     hashed_password_bytestring = hash_password() #Get user password, hash it with adding salt, return it as hashed_password
     hashed_password = hashed_password_bytestring.decode('utf-8')
     username = request.form.get("username") #Get username from form
     print(username, hashed_password)
-    db.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+    db.execute("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashed_password])
     connection.commit()
     connection.close()
-    return render_template ("/")
+    return render_template ("index.html")
 
