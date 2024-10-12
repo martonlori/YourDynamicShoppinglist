@@ -34,6 +34,17 @@
           <button onclick="document.location='/signup'" type="button" class="btn btn-primary">Sign up</button>
         </div>
       </header>
+      <div role="alert" style="width: fit-content;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul>
+              {% for category, message in messages %}
+                <li class= "alert alert-{{ category }}"> {{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+      </div>
     </div>
       <div>{% block main%} {% endblock %}</div>
     </body>

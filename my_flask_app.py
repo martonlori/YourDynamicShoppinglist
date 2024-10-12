@@ -1,9 +1,10 @@
 import sqlite3
-from flask import Flask, render_template, g, request
+from flask import Flask, render_template, g, request, flash, get_flashed_messages, url_for, redirect
 import os
 import bcrypt
 
 app = Flask(__name__)
+app.secret_key='9375dab_0909fcb'
 
 
 #Opening database connection
@@ -66,14 +67,15 @@ def register():
         db.execute("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashed_password])
         connection.commit()
         connection.close()
-        return render_template ("index.html")
-        #Add success message
+        flash('Registered successfully!', 'success')
+        return redirect (url_for('login'))
     
     elif db.execute("SELECT * FROM users WHERE username = ?", [username]).fetchone() is not None:
+        flash('Username already exists, please try registering again, with a different username.', 'danger')
         return render_template("signup.html")
-        #Add error message
 
     elif password != password_confirmation:
+        flash('The passwords did not match, please ensure, that you are entering the same password twice.', 'danger')
         return render_template("signup.html")
         #Add error message
 
