@@ -23,7 +23,7 @@ def get_users_db_connection():
 #Password hashing
 
 def hash_password():
-    user_password = request.form.get("password")
+    user_password = request.form.get("password_register")
     salt = bcrypt.gensalt(rounds=12)
     hashed_password = bcrypt.hashpw(user_password.encode('utf-8'), salt) 
     return hashed_password   
@@ -47,9 +47,39 @@ def shoppingmate():
     return render_template("shoppingmate.html")
 
 
-@app.route("/login", methods=["GET"])
+@app.route("/login", methods=["GET","POST"])
 def login():
-    return render_template("login.html")
+    if request.method == "GET":
+        return render_template("login.html")
+    
+    else:
+        db, connection = get_users_db_connection()
+        username_entered = request.form.get("username_login")
+        username_in_db = (db.execute("SELECT username FROM users WHERE username = ?", [username_entered])).fetchone()
+
+        if username_in_db is None:
+            flash('Username does not exist.', 'warning')
+            return render_template("login.html")
+        
+        else:
+            password_entered = request.form.get("password_login").encode("utf-8")
+            password_in_db_str = (db.execute("SELECT password FROM users WHERE username = ?", [username_entered])).fetchone()
+            if password_in_db_str is None:
+                flash('User not found', 'warning')
+                return render_template("login.html")
+            else:
+                password_in_db = password_in_db_str[0].encode("utf-8")
+                connection.commit()
+                connection.close()
+                print(password_entered, password_in_db)
+                
+                if not bcrypt.checkpw(password_entered, password_in_db):
+                    flash('Wrong password entered.', 'warning')
+                    return render_template("login.html")
+                else:
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('index'))
+        
 
 @app.route("/register", methods=["GET","POST"])
 def register():
@@ -57,8 +87,8 @@ def register():
         return render_template("register.html")
     
     else:
-        username = request.form.get("username") #Get username from form
-        password = request.form.get("password") #Get password from form
+        username = request.form.get("username_register") #Get username from register form
+        password = request.form.get("password_register") #Get password from form
         password_confirmation = request.form.get("passwordcheck") #Get the password confirmation
         db, connection = get_users_db_connection()
 
