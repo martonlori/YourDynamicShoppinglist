@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, render_template, g, request, flash, get_flashed_messages, url_for, redirect
+from flask import Flask, render_template, g, request, flash, get_flashed_messages, url_for, redirect, session
 import os
 import bcrypt
 
@@ -71,12 +71,12 @@ def login():
                 password_in_db = password_in_db_str[0].encode("utf-8")
                 connection.commit()
                 connection.close()
-                print(password_entered, password_in_db)
                 
                 if not bcrypt.checkpw(password_entered, password_in_db):
                     flash('Wrong password entered.', 'warning')
                     return render_template("login.html")
                 else:
+                    session["username"] = username_entered
                     flash('Login successful!', 'success')
                     return redirect(url_for('index'))
         
@@ -112,3 +112,8 @@ def register():
         elif not username:
             flash('Please enter a username to register!', 'danger')
             return render_template("register.html")
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.pop("username", None)
+    return redirect(url_for('index'))
