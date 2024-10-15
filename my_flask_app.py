@@ -78,8 +78,12 @@ def login():
                 else:
                     session["username"] = username_entered
                     flash('Login successful!', 'success')
-                    return redirect(url_for('index'))
+                    return redirect(url_for('homepage'))
         
+@app.route("/homepage", methods=["GET"])
+def homepage():
+    return render_template("homepage.html")
+
 
 @app.route("/register", methods=["GET","POST"])
 def register():
