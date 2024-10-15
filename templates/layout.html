@@ -10,13 +10,12 @@
     <title>{% block title %} {% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="https://getbootstrap.com/docs/5.3/examples/headers/headers.css" rel="stylesheet">
-
     <link href="https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
   <body>
 
     <div class="container"></div>
-      <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
         <div class="col-md-3 mb-2 mb-md-0">
           <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
             <!-- SVG file to insert: top left on header-->
@@ -40,27 +39,45 @@
           </div>
         {% endif %}
       </header>
-      <div role="alert" style="width: fit-content; margin: 0 auto;" id="alert-message">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <ul>
-              {% for category, message in messages %}
-                <div class= "alert alert-{{ category }}"> {{ message }}</div>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
+      <div id="alert-container" style="width: fit-content; height: 75px; margin: 0 auto;">
+        <div role="alert" id="alert-message">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <ul>
+                {% for category, message in messages %}
+                  <div class= "alert alert-{{ category }} alert-dismissible fade show"> {{ message }}</div>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+        </div>
       </div>
+      
       <script>
-        setTimeout(function(){
-          var alertElement = document.getElementById('alert-message');
-          if (alertElement) {
-            alertElement.style.display = 'none';
+        // Alert placeholder's height is dynamically adjusted to match alert height, to ensure alert disappearing is smooth
+        var alertElement = document.getElementById('alert-message')
+        var alertContainer = document.getElementById('alert-container')
+        if (alertElement)
+          {
+            alertContainer.style.minHeight = alertElement.offsetHeight + 'px';
           }
-        }, 3000
-      );
+
+        // Alert disappears after 3 sec with smooth transition
+        setTimeout(function()
+        {
+          var alerts = document.querySelectorAll('.alert');
+          alerts.forEach(function(alert) {
+            alert.classList.remove('show');
+            alert.classList.add('fade');
+            setTimeout(function() {
+              alert.style.display = 'none';
+            }, 500);
+          });
+        }, 3000);
       </script>
     </div>
       <div>{% block main%} {% endblock %}</div>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybGAX3UVlZBWTK5JyI6f3FP8FN0A7voRS6u3e6zB7eefXymc" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93aS+K9gyfFx4d5dRmrA+NFPF5QtfnI5DRjF/jR5sEb21l1Jzq5uwCW6p3H3Xb" crossorigin="anonymous"></script>
     </body>
   </html> 

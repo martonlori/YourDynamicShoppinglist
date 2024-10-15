@@ -116,4 +116,5 @@ def register():
 @app.route("/logout", methods=["POST"])
 def logout():
     session.pop("username", None)
+    flash('You are successfully logged out.', 'success')
     return redirect(url_for('index'))
