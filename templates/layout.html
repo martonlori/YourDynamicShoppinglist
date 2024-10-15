@@ -22,29 +22,44 @@
             <!-- SVG file to insert: top left on header-->
           </a>
         </div>
-
-        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-          <li><a href="/shoppinglist" class="nav-link px-2">Shopping list</a></li>
-          <li><a href="/shoppingmate" class="nav-link px-2">Your shop mate</a></li>
-          <li><a href="/about" class="nav-link px-2 text-muted">About</a></li>
-        </ul>
-
-        <div class="col-md-3 text-end">
-          <button onclick="document.location='/login'" type="button" class="btn btn-outline-primary me-2">Login</button>
-          <button onclick="document.location='/register'" type="button" class="btn btn-primary">Register</button>
-        </div>
+        {% if session["username"] %}
+          <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/shoppinglist" class="nav-link px-2">Shopping list</a></li>
+            <li><a href="/shoppingmate" class="nav-link px-2">Your shop mate</a></li>
+            <li><a href="/about" class="nav-link px-2 text-muted">About</a></li>
+          </ul>
+          <div class="col-md-3 text-end">
+            <form action="/logout" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-outline-primary me-2"> Logout</button>
+            </form>
+          </div>
+        {% else %}
+          <div class="col-md-3 text-end">
+            <button onclick="document.location='/login'" type="button" class="btn btn-outline-primary me-2">Login</button>
+            <button onclick="document.location='/register'" type="button" class="btn btn-primary">Register</button>
+          </div>
+        {% endif %}
       </header>
-      <div role="alert" style="width: fit-content;">
+      <div role="alert" style="width: fit-content; margin: 0 auto;" id="alert-message">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <ul>
               {% for category, message in messages %}
-                <li class= "alert alert-{{ category }}"> {{ message }}</li>
+                <div class= "alert alert-{{ category }}"> {{ message }}</div>
               {% endfor %}
             </ul>
           {% endif %}
         {% endwith %}
       </div>
+      <script>
+        setTimeout(function(){
+          var alertElement = document.getElementById('alert-message');
+          if (alertElement) {
+            alertElement.style.display = 'none';
+          }
+        }, 3000
+      );
+      </script>
     </div>
       <div>{% block main%} {% endblock %}</div>
     </body>
