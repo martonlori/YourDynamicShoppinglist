@@ -6,11 +6,13 @@
 <link href="https://getbootstrap.com/docs/5.3/examples/cover/cover.css" rel="stylesheet">
 <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
-<div class="d-flex flex-column justify-content-center align-items-center text-center text-bg-dark" style="min-height: 100vh;">
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<div class="d-flex flex-column justify-content-center align-items-center text-center text-bg-dark" style="min-height: 100vh; position: relative; overflow: hidden;">
+    <div class="blur-background"></div>
+    <div class="overlay"></div>
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column" style="position: relative; z-index: 2;">
         <main class="px-3">
-            <h1>Cover your page.</h1>
-            <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+            <h1>Your dynamic shopping list - do the groceries, save your money.</h1>
+            <p class="lead">Create a shopping list with your partner, add the items you need, and see what's discounted!</p>
             <p class="lead">
                 <a href="#" class="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a>
             </p>
