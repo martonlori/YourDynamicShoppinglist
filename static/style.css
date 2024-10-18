@@ -39,4 +39,8 @@ main {
     z-index: 1; /* A blur háttér fölött, de a szöveg alatt */
 }
 
+#alert-container {
+    z-index: 3;
+    position: relative;
+}
   
