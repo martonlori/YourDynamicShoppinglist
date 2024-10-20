@@ -3,19 +3,27 @@
 {% block title %} Login {% endblock %}
 
 {% block main %}
-<main class="d-flex justify-content-center align-items-start" style="height: 100vh; padding-bottom: 300px;">
-    <form  action="/login" method="POST" class="m-auto" style="width: fit-content;">
-        <div class="mb-3">
-            <label for="username_input_login" class="form-label"> Username</label>
-            <input type="text" name="username_login" id="username_input_login" class="form-control"  autofocus autocomplete required>
+<main class="d-flex justify-content-center align-items-start" style="height: 100vh; padding-bottom: 800px;">
+    <div class="text-center">
+        <div class="mb-3" style="padding-bottom: 100px;">
+            <h2>Please log in to your account.</h2>
+            <img src="https://i.pinimg.com/originals/19/29/ca/1929ca7713e7b8242c7af1ba50c5c00e.gif" style="height: 50px; width: 50px; border: 1px solid lightblue; border-radius: 20px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
         </div>
-        <div class="mb-3">
-            <label for="password_input_login" class="form-label"> Password </label>
-            <input type="password" name="password_login" class="form-control" id="password_input_login" autofocus="off" autocomplete="off" required>
+        <div class="text-start">
+        <form  action="/login" method="POST" class="m-auto" style="width: fit-content; padding: 40px; border: 4px solid lightblue; border-radius: 15px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);">
+            <div class="mb-3">
+                <label for="username_input_login" class="form-label"> Username</label>
+                <input type="text" name="username_login" id="username_input_login" class="form-control"  autofocus autocomplete required>
+            </div>
+            <div class="mb-3">
+                <label for="password_input_login" class="form-label"> Password </label>
+                <input type="password" name="password_login" class="form-control" id="password_input_login" autofocus="off" autocomplete="off" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary"> Login </button>
+            </div>
+        </form>
         </div>
-        <div>
-            <button type="submit" class="btn btn-primary"> Login </button>
-        </div>
-    </form>
+    </div>    
 </main>
 {% endblock %}
