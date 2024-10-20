@@ -35,7 +35,7 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Fekete háttér 50% átlátszósággal */
+    background-color: rgba(0, 0, 0, 0.35); /* Fekete háttér 50% átlátszósággal */
     z-index: 1; /* A blur háttér fölött, de a szöveg alatt */
 }
 
@@ -44,3 +44,14 @@ main {
     position: relative;
 }
   
+.blur-about-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/static/aboutbg1.png');
+    background-size: cover;
+    filter: blur(8px); /* Adjust the blur amount as needed */
+    z-index: 0;
+}
