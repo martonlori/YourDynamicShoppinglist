@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, render_template, g, request, flash, get_flashed_messages, url_for, redirect, session
-import os
+import datetime
 import bcrypt
 
 app = Flask(__name__)
@@ -122,3 +122,26 @@ def logout():
     session.pop("username", None)
     flash('You are successfully logged out.', 'success')
     return redirect(url_for('index'))
+
+@app.route("newlist", methods=["POST"])
+def newlist():
+
+    new_item = {
+        'name': '',
+        'quantity': 0,
+        'added_at': '',
+        'status': 'unchecked',
+        'added_by': ''
+    }
+
+    if request.method == "POST":
+        if request.form.get("new_item_name") and request.form.get("new_item_quantity").isdigit():
+            new_item["name"] = request.form.get("new_item_name")
+            new_item["quantity"] = request.form.get("new_item_quantity")
+            new_item["added_by"] = session["username"]
+            new_item["added_at"] = datetime.datetime.now("%c")
+            db, connection = get_shoppinglist_db_connection()
+            db.execute("INSERT INTO shoppinglist (item_name, quantity, status, added_by, added_at) VALUES (?, ?, ?, ?, ?)", [new_item["name"], new_item["quantity"], new_item["status"], new_item["added_by"], new_item["added_at"]])
+            connection.commit()
+            connection.close()
+    
