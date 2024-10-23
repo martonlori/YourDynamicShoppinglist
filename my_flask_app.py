@@ -38,10 +38,6 @@ def index():
 def about():
     return render_template("about.html")
 
-@app.route("/shoppinglist", methods=["GET"])
-def shoppinglist():
-    return render_template("shoppinglist.html")
-
 @app.route("/shoppingmate", methods=["GET"])
 def shoppingmate():
     return render_template("shoppingmate.html")
@@ -123,9 +119,9 @@ def logout():
     flash('You are successfully logged out.', 'success')
     return redirect(url_for('index'))
 
-@app.route("newlist", methods=["POST"])
+@app.route("newlist", methods=["POST", "GET"])
 def newlist():
-
+#Set new_item dictionary, so every item has the following information
     new_item = {
         'name': '',
         'quantity': 0,
@@ -133,6 +129,8 @@ def newlist():
         'status': 'unchecked',
         'added_by': ''
     }
+
+    #From the html form, update these information, and commit to the database
 
     if request.method == "POST":
         if request.form.get("new_item_name") and request.form.get("new_item_quantity").isdigit():
@@ -144,4 +142,12 @@ def newlist():
             db.execute("INSERT INTO shoppinglist (item_name, quantity, status, added_by, added_at) VALUES (?, ?, ?, ?, ?)", [new_item["name"], new_item["quantity"], new_item["status"], new_item["added_by"], new_item["added_at"]])
             connection.commit()
             connection.close()
-    
+        elif not request.form.get("new_item_name"):
+            flash('Please specify the item.', 'danger')
+            return render_template("shoppinglist.html")
+        elif request.form.get("new_item_quantity").isdigit() == False:
+            flash('Please enter a valid number for quantity.', 'danger')
+    else:
+        return render_template("shoppinglist.html")
+
+        
