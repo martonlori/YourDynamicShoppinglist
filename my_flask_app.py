@@ -59,7 +59,7 @@ def login():
         
         else:
             password_entered = request.form.get("password_login").encode("utf-8")
-            password_in_db_str = (db.execute("SELECT password FROM users WHERE username = ?", [username_entered])).fetchone()
+            password_in_db_str = ((db.execute("SELECT password FROM users WHERE username = ?", [username_entered])).fetchone())
             if password_in_db_str is None:
                 flash('User not found', 'warning')
                 return render_template("login.html")
@@ -119,35 +119,8 @@ def logout():
     flash('You are successfully logged out.', 'success')
     return redirect(url_for('index'))
 
-@app.route("newlist", methods=["POST", "GET"])
-def newlist():
-#Set new_item dictionary, so every item has the following information
-    new_item = {
-        'name': '',
-        'quantity': 0,
-        'added_at': '',
-        'status': 'unchecked',
-        'added_by': ''
-    }
 
-    #From the html form, update these information, and commit to the database
+    
 
-    if request.method == "POST":
-        if request.form.get("new_item_name") and request.form.get("new_item_quantity").isdigit():
-            new_item["name"] = request.form.get("new_item_name")
-            new_item["quantity"] = request.form.get("new_item_quantity")
-            new_item["added_by"] = session["username"]
-            new_item["added_at"] = datetime.datetime.now("%c")
-            db, connection = get_shoppinglist_db_connection()
-            db.execute("INSERT INTO shoppinglist (item_name, quantity, status, added_by, added_at) VALUES (?, ?, ?, ?, ?)", [new_item["name"], new_item["quantity"], new_item["status"], new_item["added_by"], new_item["added_at"]])
-            connection.commit()
-            connection.close()
-        elif not request.form.get("new_item_name"):
-            flash('Please specify the item.', 'danger')
-            return render_template("shoppinglist.html")
-        elif request.form.get("new_item_quantity").isdigit() == False:
-            flash('Please enter a valid number for quantity.', 'danger')
-    else:
-        return render_template("shoppinglist.html")
 
         
