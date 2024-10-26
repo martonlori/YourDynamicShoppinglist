@@ -9,15 +9,11 @@ app.secret_key='9375dab_0909fcb'
 
 #Opening database connection
 
-def get_shoppinglist_db_connection():
-    connection = sqlite3.connect("shoppinglist.db")
+def get_db_connection():
+    connection = sqlite3.connect("YourShopMate.db")
     db = connection.cursor()
     return db, connection
 
-def get_users_db_connection():
-    connection = sqlite3.connect("users.db")
-    db = connection.cursor()
-    return db, connection
 
 
 #Password hashing
@@ -49,7 +45,7 @@ def login():
         return render_template("login.html")
     
     else:
-        db, connection = get_users_db_connection()
+        db, connection = get_db_connection()
         username_entered = request.form.get("username_login")
         username_in_db = (db.execute("SELECT username FROM users WHERE username = ?", [username_entered])).fetchone()
 
@@ -90,7 +86,7 @@ def register():
         username = request.form.get("username_register") #Get username from register form
         password = request.form.get("password_register") #Get password from form
         password_confirmation = request.form.get("passwordcheck") #Get the password confirmation
-        db, connection = get_users_db_connection()
+        db, connection = get_db_connection()
 
         if db.execute("SELECT * FROM users WHERE username = ?", [username]).fetchone() is None and password == password_confirmation and username:
             hashed_password_bytestring = hash_password() #Get user password, hash it with adding salt, return it as hashed_password
