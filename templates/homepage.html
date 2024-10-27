@@ -4,6 +4,74 @@
 
 {% block main %}
 
-<h1> Homepage for logged user </h1>
+<h1> Your lists</h1>
+
+
+{% if shoppinglists %} <!-- Shoppinglist should be a list, to which a result of a query is assigned
+                            we query for existing shopping lists with the currently logged in users user id -->
+                        
+    {% for list in shoppinglists %}
+        <div class="container text-center mb-4">
+            <div class="row">
+                <div class="col">
+                    <a onclick="openList({{list.id}})"> {{list.name}} </a>   <!-- name of the list, hyperlinked so the user can click it, and when does, the content of this list will be shown -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    No. of items: {{ list.items }} <!-- no. of different items in the list -->
+                </div>
+            <div class="row">
+                <div class="col">
+                    Date created: {{ list.date }} <!-- creation date -->
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-danger" onclick="deleteList({{list.id}})"> Delete list</button>
+                </div>
+            </div>
+        </div>
+<!-- to implement: New shopping list button, at the end of the overview of existing shopping lists -->
+    {% endfor %}
+{% else %}
+        <p> You do not have any shopping lists yet.</p>
+        <button type="button" class="btn btn-success" onclick="createList()"> Create one!</button>
+{% endif %}
+
+<script>
+    function openList(listId) {
+        $.get('/getList/${listID}', function(data) {
+            console.log("List opened: ", data);
+        });
+    }
+
+    function deleteList(listId) {
+        $.ajax({
+            url: '/deleteList/${listId}',
+            type: 'DELETE',
+            success: function(response) {
+                location.reload();
+            },
+            error: function() {
+                alert('Error deleting the list.');
+            }
+        });
+    }
+
+    function createList() {
+        const listName = prompt("Please enter the name fo the new list: ");
+
+        if (!listName) {
+            alert("List creation canceled. Please specify a name for the new list.");
+            return;
+        }
+
+        $.post('/createList', {name: listName}, function(data) {
+            console.log("List created: ", data);
+            location.reload();
+        }).fail(function(){
+            alert("Error creating the list");
+        });
+    }
+</script>
 
 {% endblock %}
