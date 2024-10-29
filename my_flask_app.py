@@ -84,6 +84,7 @@ def homepage():
         user_id = user[0]
 
     available_shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE owner_id=?", [user_id])).fetchall()
+    print(available_shoppinglist)
     return render_template("homepage.html", shoppinglists=available_shoppinglist)
 
 
@@ -157,4 +158,23 @@ def viewList(listId):
     return jsonify(list_data)
 
 
-        
+@app.route("/createList", methods=["POST"])
+def createList():
+    listName = request.form.get("name")
+    creation_date = datetime.datetime.now()
+    formatted_creation_date = creation_date.strftime("%b %d")
+    db, connection = get_db_connection()
+
+    user= (db.execute("SELECT id FROM users WHERE username=?", [session["username"]])).fetchone()
+    
+    if user is None:
+        flash('Please log into your account.', 'warning')
+        return redirect(url_for('login'))
+    else:
+        user_id = user[0]
+
+    db.execute("INSERT INTO shoppinglists (name,owner_id,creation_date) VALUES (?,?,?)", [listName, user_id, formatted_creation_date])
+    connection.commit()
+    connection.close()
+    
+    return jsonify({"message": "List created successfully"}), 201
