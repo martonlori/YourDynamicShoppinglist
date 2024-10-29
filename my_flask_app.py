@@ -74,7 +74,17 @@ def login():
         
 @app.route("/homepage", methods=["GET"])
 def homepage():
-    return render_template("homepage.html")
+    db, connection = get_db_connection()
+    user= (db.execute("SELECT id FROM users WHERE username=?", [session["username"]])).fetchone()
+    
+    if user is None:
+        flash('Please log into your account.', 'warning')
+        return redirect(url_for('login'))
+    else:
+        user_id = user[0]
+
+    available_shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE owner_id=?", [user_id])).fetchall()
+    return render_template("homepage.html", shoppinglists=available_shoppinglist)
 
 
 @app.route("/register", methods=["GET","POST"])
@@ -116,7 +126,35 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.route("/openList/<int:listId>")
+def viewList(listId):
+    db, connection = get_db_connection()
+    shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE id=?", [listId])).fetchone()
+
+    items = (db.execute("SELECT * FROM items WHERE list_id=?", [listId])).fetchall()
+
+    if shoppinglist is None:
+        return jsonify({"error": "List not found"}), 404
     
+
+    items_data = []
+    for item in items:
+        item_data = {
+            "id": item["id"],
+            "name": item["name"],
+            "quantity": item["quantity"],
+            "checked": item["checked"]
+        }
+        items_data.append(item_data)
+
+    
+    list_data = {
+        "id": shoppinglist["id"],
+        "name" : shoppinglist["name"],
+        "items": items_data,
+        "date_created": shoppinglist["creation_date"]
+    }
+    return jsonify(list_data)
 
 
         
