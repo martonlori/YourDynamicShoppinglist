@@ -38,10 +38,19 @@
 {% endif %}
 
 <script>
+
     function openList(listId) {
-        $.get('/getList/${listID}', function(data) {
-            console.log("List opened: ", data);
-        });
+        $.ajax({
+            url: `/openList/${listId}`,
+            type: 'GET',
+            success: function(data) {
+                console.log("List opened: ", data)
+                location.reload();
+            },
+            error: function() {
+                alert("Error opening the list.")
+            }
+        })
     }
 
     function deleteList(listId) {
@@ -58,20 +67,26 @@
     }
 
     function createList() {
-        const listName = prompt("Please enter the name fo the new list: ");
-
+        const listName = prompt("Please enter the name of the new list: ")
         if (!listName) {
-            alert("List creation canceled. Please specify a name for the new list.");
+            alert ("List creation canceled, please specify a name for the list.")
             return;
         }
 
-        $.post('/createList', {name: listName}, function(data) {
-            console.log("List created: ", data);
-            location.reload();
-        }).fail(function(){
-            alert("Error creating the list");
-        });
+        $.ajax({
+            url:'createList',
+            type: 'POST',
+            data: { name: listName}
+            success: function(data) {
+                console.log("List created: ", data)
+                location.reload();
+            },
+            error: function() {
+                alert('Error creating the list.')
+            }
+        })
     }
+
 </script>
 
 {% endblock %}
