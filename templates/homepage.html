@@ -4,14 +4,14 @@
 
 {% block main %}
 
-<h1> Your lists</h1>
+<h1 class="text-center"> Your lists</h1>
 
 
 {% if shoppinglists %} <!-- Shoppinglist should be a list, to which a result of a query is assigned
                             we query for existing shopping lists with the currently logged in users user id -->
                         
     {% for list in shoppinglists %}
-        <div class="container text-center mb-4">
+        <div class="container mb-4">
             <div class="row">
                 <div class="col">
                     <a href="#" onclick="openList('{{list.id}}')"> {{list[4]}} </a>   <!-- name of the list, hyperlinked so the user can click it, and when does, the content of this list will be shown -->
@@ -19,7 +19,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    No. of items: {{ list.items }} <!-- no. of different items in the list -->
+                    No. of items: {{ no_items }} <!-- no. of different items in the list -->
                 </div>
             </div>
             <div class="row">
@@ -33,6 +33,7 @@
         </div>
 <!-- to implement: New shopping list button, at the end of the overview of existing shopping lists -->
     {% endfor %}
+    <button type="button" class="btn btn-success" onclick="createList()"> Create new one!</button>
 {% else %}
         <p> You do not have any shopping lists yet.</p>
         <button type="button" class="btn btn-success" onclick="createList()"> Create one!</button>

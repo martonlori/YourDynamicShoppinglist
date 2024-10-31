@@ -85,7 +85,17 @@ def homepage():
 
     available_shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE owner_id=?", [user_id])).fetchall()
     print(available_shoppinglist)
-    return render_template("homepage.html", shoppinglists=available_shoppinglist)
+    if not available_shoppinglist:
+        return render_template("homepage.html", shoppinglists=available_shoppinglist)
+   
+    no_items_raw = db.execute("SELECT COUNT(items.name) FROM items INNER JOIN shoppinglists ON items.list_id = shoppinglists.id INNER JOIN users ON shoppinglists.owner_id = users.id WHERE items.checked=0 AND shoppinglists.owner_id = ? AND items.list_id = ?", [user_id,available_shoppinglist[0][0]]).fetchone()
+
+    if no_items_raw is None:
+        no_items = 0
+    else:
+        no_items = no_items_raw[0]
+
+    return render_template("homepage.html", shoppinglists=available_shoppinglist, no_items=no_items)
 
 
 @app.route("/register", methods=["GET","POST"])
