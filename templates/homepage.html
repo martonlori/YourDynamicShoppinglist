@@ -4,42 +4,61 @@
 
 {% block main %}
 
-<h1 style="margin-top: -70px; margin-bottom: 50px; margin-left: 270px;"> Your lists</h1>
+<style>
+    .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://as1.ftcdn.net/v2/jpg/02/49/26/28/1000_F_249262875_2HfWysx8ggyFYiYpeNZCaMbc9Mm8jFZb.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        filter: blur(5px);
+        z-index: -2;
+    }
 
+</style>
 
-{% if shoppinglists %} <!-- Shoppinglist should be a list, to which a result of a query is assigned
-                            we query for existing shopping lists with the currently logged in users user id -->
-                        
-    {% for list in shoppinglists %}
-        <div class="container mb-4" style=" width: fit-content; border: 3px solid lightblue; border-radius: 20px; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1); padding: 15px; margin-left: 210px;">
-            <div class="row mb-3">
-                <div class="col-auto" style="display: inline-block; border: 3px solid lightblue; border-radius: 20px; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);">
-                    <a href="#" onclick="openList('{{list.id}}')"> {{list[4]}} </a>   <!-- name of the list, hyperlinked so the user can click it, and when does, the content of this list will be shown -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    No. of items: {{ no_items }} <!-- no. of different items in the list -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    Date created: {{ list[1] }} <!-- creation date -->
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-danger" onclick="deleteList('{{list.id}}')"> Delete list</button>
-                </div>
-            </div>
+<div class="background"></div> 
+
+    <h1 style="margin-top: -70px; margin-bottom: 50px; text-align: center; margin-top: 10px;">Your lists</h1>
+
+    {% if shoppinglists %}
+        <div style="text-align: center; padding-bottom: 50px;">
+            <button type="button" class="btn btn-success btn-sm" onclick="createList()">Want to create a new one?</button>
         </div>
-    {% endfor %}
-    <div class="container mb-4">
-        <button type="button" class="btn btn-success" onclick="createList()"> Create list</button>
-    </div>
-    
-{% else %}
-        <p> You do not have any shopping lists yet.</p>
-        <button type="button" class="btn btn-success" onclick="createList()"> Create one!</button>
-{% endif %}
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 0 auto; width: fit-content;">
+            {% for list in shoppinglists %}
+                <div style="background-color: aliceblue; width: fit-content; border: 1px solid lightblue; border-radius: 20px; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1); padding: 20px;">
+                    <div class="row mb-3">
+                        <div class="col-auto" style="border: 1px solid lightblue; border-radius: 5px; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);">
+                            <div onclick="openList('{{list.id}}')">{{list[4]}}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            No. of items: {{ no_items }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Date created: {{ list[1] }}
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-info btn-sm" onclick="openList('{{list.id}}')">View</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteList('{{list.id}}')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+
 
 <script>
 
