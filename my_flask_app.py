@@ -75,7 +75,7 @@ def login():
 @app.route("/homepage", methods=["GET"])
 def homepage():
     db, connection = get_db_connection()
-    user= (db.execute("SELECT id FROM users WHERE username=?", [session["username"]])).fetchone()
+    user= (db.execute("SELECT users_id FROM users WHERE username=?", [session["username"]])).fetchone()
     
     if user is None:
         flash('Please log into your account.', 'warning')
@@ -87,7 +87,7 @@ def homepage():
     if not available_shoppinglist:
         return render_template("homepage.html", shoppinglists=available_shoppinglist)
    
-    no_items_raw = db.execute("SELECT COUNT(items.name) FROM items INNER JOIN shoppinglists ON items.list_id = shoppinglists.id INNER JOIN users ON shoppinglists.owner_id = users.id WHERE items.checked=0 AND shoppinglists.owner_id = ? AND items.list_id = ?", [user_id,available_shoppinglist[0][0]]).fetchone()
+    no_items_raw = db.execute("SELECT COUNT(items.name) FROM items INNER JOIN shoppinglists ON items.list_id = shoppinglists.shoppinglists_id INNER JOIN users ON shoppinglists.owner_id = users.users_id WHERE items.checked=0 AND shoppinglists.owner_id = ? AND items.list_id = ?", [user_id,available_shoppinglist[0][0]]).fetchone()
 
     if no_items_raw is None:
         no_items = 0
@@ -139,38 +139,34 @@ def logout():
 @app.route("/openList/<int:listId>")
 def viewList(listId):
     db, connection = get_db_connection()
-    shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE id=?", [listId])).fetchone()
+    shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE shoppinglists_id=?", [listId])).fetchone()
+    print(shoppinglist)
 
-    items = (db.execute("SELECT * FROM items WHERE list_id=?", [listId])).fetchall()
+    items = db.execute("SELECT * FROM items WHERE list_id=? AND checked = 0", [listId]).fetchall()
+    print(items)
 
     if shoppinglist is None:
         return jsonify({"error": "List not found"}), 404
     
+    list_name = shoppinglist[4]
 
     items_data = []
     for item in items:
         item_data = {
-            "id": item["id"],
-            "name": item["name"],
-            "quantity": item["quantity"],
-            "checked": item["checked"]
+            "id": item[0],
+            "name": item[4],
+            "quantity": item[5],
+            "checked": item[3]
         }
         items_data.append(item_data)
 
-    
-    list_data = {
-        "id": shoppinglist["id"],
-        "name" : shoppinglist["name"],
-        "items": items_data,
-        "date_created": shoppinglist["creation_date"]
-    }
-    return jsonify(list_data)
+    return render_template("shoppinglist.html", items_data=items_data, list_name=list_name)
 
 @app.route("/deleteList/<int:listId>", methods = ["DELETE"])
 def deleteList(listId):
     try:
         db, connection = get_db_connection()
-        db.execute("DELETE FROM shoppinglists WHERE id=?", [listId])
+        db.execute("DELETE FROM shoppinglists WHERE shoppinglists_id=?", [listId])
         connection.commit()
         connection.close()
         return jsonify({"message": "List deleted successfully"}), 201
@@ -185,7 +181,7 @@ def createList():
     formatted_creation_date = creation_date.strftime("%b %d")
     db, connection = get_db_connection()
 
-    user= (db.execute("SELECT id FROM users WHERE username=?", [session["username"]])).fetchone()
+    user= (db.execute("SELECT users_id FROM users WHERE username=?", [session["username"]])).fetchone()
     
     if user is None:
         flash('Please log into your account.', 'warning')

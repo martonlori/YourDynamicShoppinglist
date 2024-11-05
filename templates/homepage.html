@@ -72,6 +72,7 @@
             type: 'GET',
             success: function(data) {
                 console.log("List opened: ", data);
+                window.location.href = `/openList/${listId}`;
             },
             error: function() {
                 alert("Error opening the list.")
