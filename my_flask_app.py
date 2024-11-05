@@ -83,8 +83,7 @@ def homepage():
     else:
         user_id = user[0]
 
-    available_shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE owner_id=?", [user_id])).fetchall()
-    print(available_shoppinglist)
+    available_shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE owner_id=? ORDER BY creation_date DESC", [user_id])).fetchall()
     if not available_shoppinglist:
         return render_template("homepage.html", shoppinglists=available_shoppinglist)
    
@@ -166,6 +165,17 @@ def viewList(listId):
         "date_created": shoppinglist["creation_date"]
     }
     return jsonify(list_data)
+
+@app.route("/deleteList/<int:listId>", methods = ["DELETE"])
+def deleteList(listId):
+    try:
+        db, connection = get_db_connection()
+        db.execute("DELETE FROM shoppinglists WHERE id=?", [listId])
+        connection.commit()
+        connection.close()
+        return jsonify({"message": "List deleted successfully"}), 201
+    except Exception as error:
+        print(f"Something went wrong: {error}")
 
 
 @app.route("/createList", methods=["POST"])

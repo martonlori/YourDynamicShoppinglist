@@ -15,7 +15,7 @@
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
-        filter: blur(5px);
+        filter: blur(3px);
         z-index: -2;
     }
 
@@ -23,7 +23,7 @@
 
 <div class="background"></div> 
 
-    <h1 style="margin-top: -70px; margin-bottom: 50px; text-align: center; margin-top: 10px;">Your lists</h1>
+    <h1 style="margin-top: -70px; margin-bottom: 50px; text-align: center; margin-top: 10px;">Your shoppinglists</h1>
 
     {% if shoppinglists %}
         <div style="text-align: center; padding-bottom: 50px;">
@@ -48,12 +48,16 @@
                             Date created: {{ list[1] }}
                         </div>
                         <div class="col">
-                            <button type="button" class="btn btn-info btn-sm" onclick="openList('{{list.id}}')">View</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteList('{{list.id}}')">Delete</button>
+                            <button type="button" class="btn btn-info btn-sm" onclick="openList('{{list[0]}}')">View</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteList('{{list[0]}}')">Delete</button>
                         </div>
                     </div>
                 </div>
             {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding-bottom: 50px;">
+            <button type="button" class="btn btn-success btn-sm" onclick="createList()">Create a new list!</button>
         </div>
     {% endif %}
 </div>
@@ -76,8 +80,11 @@
     }
 
     function deleteList(listId) {
-        $.ajax({
-            url: '/deleteList/${listId}',
+        let answer = confirm("Are you sure?");
+        if (answer == true)
+            {
+                $.ajax({
+            url: `/deleteList/${listId}`,
             type: 'DELETE',
             success: function(response) {
                 location.reload();
@@ -86,6 +93,10 @@
                 alert('Error deleting the list.');
             }
         });
+            }
+
+
+
     }
 
     function createList() {

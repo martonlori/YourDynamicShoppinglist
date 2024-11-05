@@ -25,7 +25,7 @@ main {
     bottom: 0;
     background-image: url('/static/background1.jpeg');
     background-size: cover;
-    filter: blur(8px); /* Adjust the blur amount as needed */
+    filter: blur(4px); /* Adjust the blur amount as needed */
     z-index: 0; /* Behind the text */
 }
 
@@ -52,6 +52,6 @@ main {
     bottom: 0;
     background-image: url('/static/aboutbg1.png');
     background-size: cover;
-    filter: blur(8px); /* Adjust the blur amount as needed */
+    filter: blur(4px); /* Adjust the blur amount as needed */
     z-index: 0;
 }
