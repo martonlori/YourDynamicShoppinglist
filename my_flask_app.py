@@ -194,3 +194,28 @@ def createList():
     connection.close()
     
     return jsonify({"message": "List created successfully"}), 201
+
+@app.route("/addItem", methods=["POST"])
+def addItem():
+    db, connection = get_db_connection()
+
+    user= (db.execute("SELECT users_id FROM users WHERE username=?", [session["username"]])).fetchone()
+    
+    if user is None:
+        flash('Please log into your account.', 'warning')
+        return redirect(url_for('login'))
+    else:
+        user_id = user[0]
+        listId = request.form.get("listId")
+        itemName = request.form.get("itemName")
+        quantity = request.form.get("quantity")
+
+    if not all([listId, itemName, quantity]):
+        return jsonify({"error": "Missing data"}), 400
+    
+    
+    db.execute("INSERT INTO items (list_id, creator_id, name, quantity) VALUES (?, ?, ?, ?)", [listId, user_id, itemName, quantity])
+    connection.commit()
+    connection.close()
+
+    return jsonify({"message": "List created successfully"}), 201
