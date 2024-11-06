@@ -84,17 +84,18 @@ def homepage():
         user_id = user[0]
 
     available_shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE owner_id=? ORDER BY creation_date DESC", [user_id])).fetchall()
+    print(available_shoppinglist)
     if not available_shoppinglist:
         return render_template("homepage.html", shoppinglists=available_shoppinglist)
    
-    no_items_raw = db.execute("SELECT COUNT(items.name) FROM items INNER JOIN shoppinglists ON items.list_id = shoppinglists.shoppinglists_id INNER JOIN users ON shoppinglists.owner_id = users.users_id WHERE items.checked=0 AND shoppinglists.owner_id = ? AND items.list_id = ?", [user_id,available_shoppinglist[0][0]]).fetchone()
-
+    no_items_raw = db.execute("SELECT shoppinglists.shoppinglists_id, COUNT(items.items_id) AS item_count FROM shoppinglists LEFT JOIN items ON shoppinglists.shoppinglists_id = items.list_id AND items.checked = 0 WHERE shoppinglists.owner_id = ? GROUP BY shoppinglists.shoppinglists_id", [user_id]).fetchall()
+    print(no_items_raw)
     if no_items_raw is None:
-        no_items = 0
-    else:
-        no_items = no_items_raw[0]
+        no_items_raw = 0
 
-    return render_template("homepage.html", shoppinglists=available_shoppinglist, no_items=no_items)
+    no_items_dict = {item[0]: item[1] for item in no_items_raw}  # `item[0]` = list_id, `item[1]` = item_count
+    
+    return render_template("homepage.html", shoppinglists=available_shoppinglist, no_items=no_items_dict)
 
 
 @app.route("/register", methods=["GET","POST"])
@@ -167,6 +168,7 @@ def deleteList(listId):
     try:
         db, connection = get_db_connection()
         db.execute("DELETE FROM shoppinglists WHERE shoppinglists_id=?", [listId])
+        db.execute("DELETE FROM items WHERE list_id=?", [listId])
         connection.commit()
         connection.close()
         return jsonify({"message": "List deleted successfully"}), 201

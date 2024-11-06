@@ -25,13 +25,17 @@
         {% if session["username"] %}
           <div class="col-md-3 text-end">
             <form action="/logout" method="POST" style="display: inline;">
+              <button onclick="document.location='/homepage'" type="button" class="btn btn-light">My lists</button>
               <button type="submit" class="btn btn-outline-primary me-2"> Logout</button>
+              
             </form>
           </div>
         {% else %}
           <div class="col-md-3 text-end">
+            <button onclick="document.location='/'" type="button" class="btn btn-light">Homepage</button>
             <button onclick="document.location='/login'" type="button" class="btn btn-outline-primary me-2">Login</button>
             <button onclick="document.location='/register'" type="button" class="btn btn-primary">Register</button>
+            
           </div>
         {% endif %}
       </header>
