@@ -255,3 +255,21 @@ def deleteItem(items_id):
     finally:
         connection.commit()
         connection.close()
+
+@app.route("/editItem/<int:items_id>", methods={"PUT"})
+def editItem(items_id):
+    itemName = request.form.get('itemName')
+    quantity = request.form.get('quantity')
+    db, connection = get_db_connection()
+
+    try:
+        db.execute("UPDATE items SET name=?, quantity=? WHERE items_id=?", [itemName, quantity, items_id])
+        return jsonify({"message" : "Item modified successfully."}), 201
+    
+    except:
+        print("Error modifying the item")
+        return jsonify({"message" : "Error modifying the item"}), 400
+    
+    finally:
+        connection.commit()
+        connection.close()
