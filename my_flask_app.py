@@ -143,7 +143,7 @@ def viewList(listId):
     shoppinglist = (db.execute("SELECT * FROM shoppinglists WHERE shoppinglists_id=?", [listId])).fetchone()
     print(shoppinglist)
 
-    items = db.execute("SELECT * FROM items WHERE list_id=? AND checked = 0", [listId]).fetchall()
+    items = db.execute("SELECT * FROM items WHERE list_id=?", [listId]).fetchall()
     print(items)
 
     if shoppinglist is None:
@@ -221,3 +221,37 @@ def addItem():
     connection.close()
 
     return jsonify({"message": "List created successfully"}), 201
+
+
+@app.route("/toggleCheck/<int:items_id>", methods = ["PUT"])
+def toggleCheck(items_id):
+    db, connection = get_db_connection()
+
+    try:
+
+        db.execute("UPDATE items SET checked=1 WHERE items_id = ? AND checked = 0", [items_id])
+        return jsonify({"message" : "Item checked."}), 201
+
+    except:
+        print("An error occurred.")
+        return jsonify({"message" : "Error checking the item"}), 400
+    
+    finally:
+        connection.commit()
+        connection.close()
+
+@app.route("/deleteItem/<int:items_id>", methods=["DELETE"])
+def deleteItem(items_id):
+    db, connection = get_db_connection()
+
+    try:
+        db.execute("DELETE FROM items WHERE items_id=?", [items_id])
+        return jsonify({"message" : "Item deleted successfully"}), 201
+
+    except:
+        print("Error deleting the item.")
+        return jsonify({"message" : "Error deleting the item" }), 400
+
+    finally:
+        connection.commit()
+        connection.close()
