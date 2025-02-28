@@ -84,3 +84,9 @@ Originally named after the project's first name, which has since changed.
 
 ---
 
+🔮 Future Plans
+	•	📌 Optimize AJAX-based updates for smoother UI experience.
+	•	📌 Implement “Forgot Password” feature with email verification.
+	•	📌 Improve database query efficiency using key-value structures.
+	•	📌 Enhance discount notification system for better store matching.
+	•	📌 Expand list-sharing feature for multi-user collaboration.
